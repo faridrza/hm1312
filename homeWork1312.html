@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+    <script>
+        //customers
+        const baseUrl = "https://northwind.vercel.app/api/customers/"
+        const instance = axios.create({
+            baseURL: baseUrl
+        })
+        const body = {
+            "id": "",
+            "companyName": `companyName1`,
+            "contactName": "Thomas Hardy",
+            "contactTitle": "Sales Representative",
+            "address": {
+                "street": "120 Hanover Sq.",
+                "city": "London",
+                "region": "NULL",
+                "postalCode": "WA1 1DP",
+                "country": "UK",
+                "phone": "(171) 555-7788"
+            }
+        }
+
+
+        function axiosFunc(method, ID = "") {
+            switch (method) {
+                case "POST": instance.post("", body)
+                    .then(res => console.log(res))
+                    break
+                case "PUT": instance.put(`${ID}`, body)
+                    .then(res => console.log(res))
+                    break
+                case "DELETE": instance.delete(`${ID}`)
+                    .then(res => console.log(res))
+                    break
+            }
+        }
+
+        function fetchFunc(method, ID = "") {
+            switch (method) {
+                case "POST": fetch(baseUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(data => console.log(data))
+                    break
+                case "PUT": fetch(baseUrl + ID, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(data => console.log(data))
+                    break
+                case "DELETE": fetch(baseUrl + ID, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                }).then(res => res.json())
+                    .then(data => console.log(data))
+                    break
+            }
+        }
+
+        //products
+        const productsUrl = "https://northwind.vercel.app/api/products/"
+        const productsInstance = axios.create({ baseURL: productsUrl })
+        const productBody = {
+            "supplierId": 2,
+            "categoryId": 3,
+            "quantityPerUnit": "48 - 6 oz jars",
+            "unitPrice": 22,
+            "unitsInStock": 53,
+            "unitsOnOrder": 0,
+            "reorderLevel": 0,
+            "discontinued": true,
+            "name": "Chef Anton's Cajun Seasoning",
+            "supplier": {
+                "id": 2,
+                "companyName": "New Orleans Cajun Delights",
+                "contactName": "Shelley Burke",
+                "contactTitle": "Order Administrator",
+                "address": {
+                    "street": "P.O. Box 78934",
+                    "city": "New Orleans",
+                    "region": "LA",
+                    "postalCode": 70117,
+                    "country": "USA",
+                    "phone": "(100) 555-4822"
+                }
+            }
+        }
+
+        function getMostExpensive() {
+            productsInstance.get()
+                .then(res => {
+                    const data = res.data.sort((a, b) => b.unitPrice - a.unitPrice)
+                    console.log(data[0]);
+                })
+        }
+
+        function averageStock() {
+            let total = 0
+            productsInstance.get()
+                .then(res => {
+                    let length = res.data.length
+                    res.data.forEach(element => {
+                        total += element.unitsInStock
+                    });
+                    let average = total / length
+                    console.log(Math.round(average));
+                })
+        }
+
+        function startsWithC() {
+            productsInstance.get().then(res => {
+                let c = res.data.filter(element =>
+                    element.name.startsWith("C"))
+                console.log(c);
+            }
+            )
+        }
+
+
+
+
+
+
+
+
+        //customers
+        function customersFromLondon() {
+            instance.get().then(res => {
+                let London = res.data.filter(element =>
+                    element.address.city == "London")
+                console.log(London);
+            }
+            )
+        }
+
+        function nullRegions() {
+            instance.get().then(res => {
+                let nullRegions = res.data.filter(element =>
+                    element.address.region == "NULL")
+                console.log(nullRegions);
+            }
+            )
+        }
+
+        //API-2
+        const secondBaseUrl = "https://jsonplaceholder.typicode.com/"
+        const secondInstance = axios.create({
+            baseURL : secondBaseUrl
+        })
+        //posts
+        function findPostsWithID(ID){
+            secondInstance.get("posts").then(
+                res => {let user1 = res.data.filter(element => element.userId == ID)
+                    console.log(user1.length);
+                }
+            )
+        }
+
+        function findAlbomWithID(ID){
+            secondInstance.get("albums").then(
+                res => {let albom1 = res.data.filter(element => element.userId == ID)
+                    console.log(albom1.length);
+                }
+            )
+        }
+         
+
+    </script>
+</body>
+
+</html>
